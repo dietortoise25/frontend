@@ -4,7 +4,7 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
-} from "../services/productService";
+} from "../services/productManageService";
 
 function Admin() {
   const [products, setProducts] = useState([]);
