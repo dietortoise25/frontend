@@ -1,8 +1,8 @@
-import axios from 'axios';
-import authStore from '../store/authStore';
+import axios from "axios";
+import authStore from "../store/authStore";
 
 const service = axios.create({
-  baseURL: import.meta.env.VITE_APP_BASE_API, // api 的 base_url
+  baseURL: import.meta.env.VITE_APP_BASE_API_PROD, // api 的 base_url
   timeout: 5000, // 请求超时时间
 });
 
@@ -13,7 +13,7 @@ service.interceptors.request.use(
     // 例如，可以在这里添加 token
     const { token } = authStore.getState();
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
   },
@@ -34,7 +34,7 @@ service.interceptors.response.use(
   (error) => {
     // For error responses (non-2xx HTTP status), reject the promise.
     // The error object will contain error.response.data for further handling.
-    console.log('err' + error); // for debug
+    console.log("err" + error); // for debug
     // Message({
     //   message: error.message,
     //   type: 'error',
