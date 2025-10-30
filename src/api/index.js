@@ -23,6 +23,13 @@ export function put(url, data) {
     data: data,
   });
 }
+export function patch(url, data) {
+  return request({
+    url: url,
+    method: "patch",
+    data: data,
+  });
+}
 
 export function del(url, params) {
   return request({

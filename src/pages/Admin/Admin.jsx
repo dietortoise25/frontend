@@ -4,6 +4,7 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  getProductCount,
 } from "../../services/productManageService";
 import useToast from "@/hooks/useToast";
 import AddProductModal from "./components/AddProductModal";
@@ -12,17 +13,67 @@ import EditProductModal from "./components/EditProductModal";
 function Admin() {
   const { showSuccess, showError } = useToast();
   const [products, setProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(5); // 每页显示x个产品
+  const [totalProducts, setTotalProducts] = useState(0); // 新增：产品总数
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(""); // 新增：搜索关键词
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm); // 新增：防抖搜索关键词
+  const [productCache, setProductCache] = useState({}); // 新增：产品缓存
+
+  // 防抖处理
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 1000); // 500ms 防抖延迟
+
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [searchTerm]);
+
+  const refreshProductData = async (search = "") => {
+    const cacheKey = `${currentPage}-${productsPerPage}-${search}`;
+    if (productCache[cacheKey]) {
+      setProducts(productCache[cacheKey].products);
+      setTotalProducts(productCache[cacheKey].totalProducts);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const productsResponse = await getProducts(
+        currentPage,
+        productsPerPage,
+        search
+      );
+      setProducts(productsResponse.data);
+      const countResponse = await getProductCount(search);
+      setTotalProducts(countResponse.data);
+      setProductCache((prevCache) => ({
+        ...prevCache,
+        [cacheKey]: {
+          products: productsResponse.data,
+          totalProducts: countResponse.data,
+        },
+      }));
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddProduct = async (newProduct) => {
     try {
       await createProduct(newProduct);
-      const response = await getProducts();
-      setProducts(response.data);
+      setProductCache({}); // 清空缓存
+      await refreshProductData(); // 调用抽离的函数
       setIsAddModalOpen(false);
       showSuccess("产品添加成功！");
     } catch (err) {
@@ -31,11 +82,11 @@ function Admin() {
     }
   };
 
-  const handleUpdateProduct = async (id, updatedProduct) => {
+  const handleUpdateProduct = async (updatedProduct) => {
     try {
-      await updateProduct(id, updatedProduct);
-      const response = await getProducts();
-      setProducts(response.data);
+      await updateProduct(updatedProduct);
+      setProductCache({}); // 清空缓存
+      await refreshProductData(); // 调用抽离的函数
       setIsEditModalOpen(false);
       setSelectedProduct(null);
       showSuccess("产品更新成功！");
@@ -48,8 +99,8 @@ function Admin() {
   const handleDeleteProduct = async (id) => {
     try {
       await deleteProduct(id);
-      const response = await getProducts();
-      setProducts(response.data);
+      setProductCache({}); // 清空缓存
+      await refreshProductData(); // 调用抽离的函数
       showSuccess("产品删除成功！");
     } catch (err) {
       setError(err);
@@ -58,22 +109,18 @@ function Admin() {
   };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await getProducts();
-        setProducts(response.data);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducts();
-  }, []);
+    refreshProductData(debouncedSearchTerm); // 调用抽离的函数，并传入防抖后的搜索关键词
+  }, [currentPage, productsPerPage, debouncedSearchTerm]);
 
   const handleEditClick = (product) => {
     setSelectedProduct({ ...product });
     setIsEditModalOpen(true);
+  };
+
+  const totalPages = Math.ceil(totalProducts / productsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
@@ -90,13 +137,42 @@ function Admin() {
       )}
 
       {!loading && !error && (
-        <div className="mb-4">
+        <div className="mb-4 flex justify-between">
           <button
             className="btn btn-primary"
             onClick={() => setIsAddModalOpen(true)}
           >
             添加产品
           </button>
+          <label className="input input-bordered flex items-center gap-2">
+            <svg
+              className="h-[1em] opacity-50"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+            >
+              <g
+                strokeLinejoin="round"
+                strokeLinecap="round"
+                strokeWidth="2.5"
+                fill="none"
+                stroke="currentColor"
+              >
+                <circle
+                  cx="11"
+                  cy="11"
+                  r="8"
+                ></circle>
+                <path d="m21 21-4.3-4.3"></path>
+              </g>
+            </svg>
+            <input
+              type="search"
+              required
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </label>
         </div>
       )}
 
@@ -106,6 +182,7 @@ function Admin() {
             <thead>
               <tr>
                 <th>ID</th>
+                <th>图片</th>
                 <th>名称</th>
                 <th>类别</th>
                 <th>价格</th>
@@ -117,6 +194,16 @@ function Admin() {
               {products.map((product) => (
                 <tr key={product.id}>
                   <td>{product.id}</td>
+                  <td>
+                    <img
+                      src={
+                        product.picture ||
+                        "https://dummyimage.com/200x200/000/eee"
+                      }
+                      alt={product.name || "Placeholder"}
+                      className="w-16 h-16 object-cover"
+                    />
+                  </td>
                   <td>{product.name}</td>
                   <td>{product.tag}</td>
                   <td>{product.price}</td>
@@ -139,6 +226,22 @@ function Admin() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {!loading && !error && totalPages > 1 && (
+        <div className="join mt-4 flex justify-center">
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+              key={index + 1}
+              className={`join-item btn ${
+                currentPage === index + 1 ? "btn-active" : ""
+              }`}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </button>
+          ))}
         </div>
       )}
 

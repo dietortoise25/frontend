@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Modal from "@/components/Modal";
+import ImageUpload from "@/components/ImageUpload";
 
 const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
   const [newProduct, setNewProduct] = useState({
@@ -7,6 +8,9 @@ const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
     tag: "",
     price: 0,
     description: "",
+    picture: "",
+    price_min: 0,
+    price_max: 0,
   });
 
   useEffect(() => {
@@ -16,6 +20,9 @@ const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
         tag: "",
         price: 0,
         description: "",
+        picture: "",
+        price_min: 0,
+        price_max: 0,
       });
     }
   }, [isOpen]);
@@ -112,6 +119,48 @@ const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               required
             ></textarea>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              图片上传
+            </label>
+            <ImageUpload
+              onImageUpload={(publicImageUrl) =>
+                setNewProduct((prev) => ({ ...prev, picture: publicImageUrl }))
+              }
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="price_min"
+              className="block text-sm font-medium text-gray-700"
+            >
+              最低价格
+            </label>
+            <input
+              type="number"
+              id="price_min"
+              name="price_min"
+              value={newProduct.price_min}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="price_max"
+              className="block text-sm font-medium text-gray-700"
+            >
+              最高价格
+            </label>
+            <input
+              type="number"
+              id="price_max"
+              name="price_max"
+              value={newProduct.price_max}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            />
           </div>
           <div className="flex justify-end space-x-3">
             <button

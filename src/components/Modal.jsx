@@ -1,20 +1,40 @@
-import React from 'react';
+import React, { useEffect, useRef } from "react";
 
 const Modal = ({ isOpen, onClose, children, title }) => {
-  if (!isOpen) return null;
+  const modalRef = useRef(null);
+
+  useEffect(() => {
+    const modalElement = modalRef.current;
+    if (modalElement) {
+      if (isOpen) {
+        modalElement.showModal();
+      } else {
+        modalElement.close();
+      }
+    }
+  }, [isOpen]);
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
-        <div className="flex justify-between items-center border-b pb-3 mb-4">
-          <h2 className="text-xl font-semibold">{title}</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-        </div>
-        <div>
-          {children}
+    <dialog
+      id="my_modal_1"
+      className="modal"
+      ref={modalRef}
+    >
+      <div className="modal-box">
+        <h3 className="font-bold text-lg">{title}</h3>
+        <div className="py-4">{children}</div>
+        <div className="modal-action">
+          <form method="dialog">
+            <button
+              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+              onClick={onClose}
+            >
+              ✕
+            </button>
+          </form>
         </div>
       </div>
-    </div>
+    </dialog>
   );
 };
 
