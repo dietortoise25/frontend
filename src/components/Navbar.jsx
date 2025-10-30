@@ -15,13 +15,22 @@ function Navbar() {
   const handleLogout = () => {
     logoutUser(); // Clear token from localStorage
     logout(); // Clear Zustand state
-    navigate('/login'); // Redirect to login page after logout
+    navigate("/login"); // Redirect to login page after logout
   };
 
   return (
     <div className="navbar bg-base-100 shadow-sm">
       <div className="navbar-start">
-        <a className="btn btn-ghost text-xl">Miten</a>
+        <Link
+          to="/"
+          className="btn btn-ghost text-xl"
+        >
+          <img
+            src="/miten-logo.svg"
+            alt="Miten Logo"
+            className="w-15"
+          />
+        </Link>
       </div>
       <div className="navbar-end">
         <ul className="menu menu-horizontal px-1">
@@ -53,16 +62,19 @@ function Navbar() {
           ) : (
             <>
               <li>
-                <Link to="/login">
-                  <div
-                    className="tooltip tooltip-bottom"
-                    data-tip="登录"
-                  >
-                    <LogIn className="h-5 w-5" />
-                  </div>
-                </Link>
+                <button className="btn btn-ghost">
+                  <Link to="/login">
+                    <div
+                      className="tooltip tooltip-bottom flex gap-2"
+                      data-tip="登录"
+                    >
+                      <LogIn className="h-5 w-5" />
+                      <span>LogIn</span>
+                    </div>
+                  </Link>
+                </button>
               </li>
-              <li>
+              {/* <li>
                 <Link to="/register">
                   <div
                     className="tooltip tooltip-bottom"
@@ -71,7 +83,7 @@ function Navbar() {
                     <UserPlus className="h-5 w-5" />
                   </div>
                 </Link>
-              </li>
+              </li> */}
             </>
           )}
           <li>
@@ -79,11 +91,11 @@ function Navbar() {
               to="/admin"
               className="btn btn-ghost"
             >
-              Admin
+              产品管理后台
             </Link>
           </li>
         </ul>
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2">
           <div className="dropdown dropdown-end">
             <div
               tabIndex={0}
@@ -106,7 +118,7 @@ function Navbar() {
               </li>
             </ul>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

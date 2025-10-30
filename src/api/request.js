@@ -1,8 +1,9 @@
 import axios from "axios";
 import authStore from "../store/authStore";
+import environment from "../utils/useApiUrl.js";
 
 const service = axios.create({
-  baseURL: import.meta.env.VITE_APP_BASE_API_PROD, // api 的 base_url
+  baseURL: environment.API_URL, // api 的 base_url
   timeout: 5000, // 请求超时时间
 });
 

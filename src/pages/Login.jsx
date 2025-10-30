@@ -1,15 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/authService";
+import useToast from "@/hooks/useToast";
 import useAuthStore from "../store/authStore";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false); // Add isLoading state
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
+  const { showSuccess, showError } = useToast();
+
+  useEffect(() => {
+    showSuccess("Welcome to Miten Catalog!");
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,12 +24,18 @@ function Login() {
       if (result.success) {
         console.log("Login successful:", result.data);
         login(null, result.data); // Store user and token in Zustand
+        showSuccess("Login successful"); // Show success toast
         navigate("/admin");
       } else {
-        setMessage(result.message);
+        const isLoginError = result.message.includes("Unauthorized");
+        if (isLoginError) {
+          showError("账号或者密码错误"); // Show error toast
+        } else {
+          showError(result.message); // Show error toast
+        }
       }
     } catch (error) {
-      setMessage("Login failed: " + error.message);
+      showError("Login failed: " + error.message); // Show error toast
     } finally {
       setIsLoading(false); // Set isLoading to false when login request ends
     }
@@ -83,7 +94,7 @@ function Login() {
                 )}
               </button>
             </div>
-            {message && <p className="text-center mt-4">{message}</p>}
+            {/* {message && <p className="text-center mt-4">{message}</p>} */}
           </form>
         </div>
       </div>

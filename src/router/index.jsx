@@ -5,7 +5,7 @@ import About from "../pages/About.jsx";
 import Product from "../pages/Product.jsx";
 import Register from "../pages/Register.jsx";
 import Login from "../pages/Login.jsx";
-import Admin from "../pages/Admin.jsx";
+import Admin from "../pages/Admin/Admin.jsx";
 
 const router = createBrowserRouter([
   {

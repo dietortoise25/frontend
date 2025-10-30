@@ -3,11 +3,18 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Product from "./pages/Product";
-import Admin from "./pages/Admin";
+import Admin from "./pages/Admin/Admin.jsx";
 import Navbar from "./components/Navbar";
 import PrivateRoute from "./components/PrivateRoute";
+import { useEffect } from "react";
+import environment from "./utils/useApiUrl.js";
 
 function App() {
+  useEffect(() => {
+    console.log(
+      `devMode:${environment.isDevMode},API_URL:${environment.API_URL}`
+    );
+  }, []);
   return (
     <>
       <Navbar />
