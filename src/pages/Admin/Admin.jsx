@@ -257,11 +257,13 @@ function Admin() {
         </div>
       )}
 
-      <AddProductModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onAddProduct={handleAddProduct}
-      />
+      {isAddModalOpen && (
+        <AddProductModal
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          onAddProduct={handleAddProduct}
+        />
+      )}
 
       {selectedProduct && (
         <EditProductModal

@@ -53,21 +53,18 @@ const EditProductModal = ({
 
     const fileName = `${Date.now()}`;
     const path = await uploadImageToSupabase(file, fileName);
-    console.log("uploadImageToSupabase path:", path);
+
     if (path) {
-      const fullPath = await getPublicImageUrl(path);
-      console.log("Image upload successful, fullPath:", fullPath);
-      setEditedProduct((prevProduct) => ({
-        ...prevProduct,
-        picture: fullPath,
-      }));
+      const fullPath = getPublicImageUrl(path);
+      if (fullPath) {
+        setEditedProduct((prev) => {
+          const updated = { ...prev, picture: fullPath };
+          return updated;
+        });
+      }
     }
     setUploading("done");
   };
-
-  useEffect(() => {
-    console.log("editedProduct updated:", editedProduct);
-  }, [editedProduct]);
 
   return (
     <Modal
@@ -176,7 +173,7 @@ const EditProductModal = ({
           <div>
             <label className="block text-sm font-medium  mb-2">图片上传</label>
             <label
-              htmlFor="image-upload-add"
+              htmlFor="image-upload-edit"
               className="btn btn-primary"
             >
               选择图片
@@ -185,7 +182,7 @@ const EditProductModal = ({
               type="file"
               accept="image/*"
               onChange={handleFileChange}
-              id="image-upload-add"
+              id="image-upload-edit"
               disabled={uploading === "uploading"}
               className="hidden"
             />
@@ -207,9 +204,14 @@ const EditProductModal = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className={`px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+                uploading === "uploading"
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              }`}
+              disabled={uploading === "uploading"}
             >
-              更新
+              {uploading === "uploading" ? "图片上传中" : "更新"}
             </button>
           </div>
         </form>
