@@ -1,5 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import homeProduct1Image from "../assets/home-product-1.png";
+import homeProduct2Image from "../assets/home-product-2.png";
+import homeProduct3Image from "../assets/home-product-3.png";
 
 function Home() {
   return (
@@ -32,7 +35,7 @@ function Home() {
           <div className="card bg-base-100 shadow-xl image-full">
             <figure>
               <img
-                src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b49d.jpg"
+                src={homeProduct1Image}
                 alt="Electronics"
               />
             </figure>
@@ -56,7 +59,7 @@ function Home() {
           <div className="card bg-base-100 shadow-xl image-full">
             <figure>
               <img
-                src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b49d.jpg"
+                src={homeProduct2Image}
                 alt="Accessories"
               />
             </figure>
@@ -80,7 +83,7 @@ function Home() {
           <div className="card bg-base-100 shadow-xl image-full">
             <figure>
               <img
-                src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b49d.jpg"
+                src={homeProduct3Image}
                 alt="Peripherals"
               />
             </figure>
