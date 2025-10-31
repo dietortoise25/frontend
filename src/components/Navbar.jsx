@@ -33,7 +33,74 @@ function Navbar() {
         </Link>
       </div>
       <div className="navbar-end">
-        <ul className="menu menu-horizontal px-1">
+        {/* small screen */}
+        <div>
+          <div className="drawer drawer-end lg:hidden">
+            <input
+              id="my-drawer-4"
+              type="checkbox"
+              className="drawer-toggle"
+            />
+            <div className="drawer-content">
+              {/* Page content here */}
+              <label
+                htmlFor="my-drawer-4"
+                className="btn btn-ghost lg:hidden"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4 6h16M4 12h16M4 18h7"
+                  />
+                </svg>
+              </label>
+            </div>
+            <div className="drawer-side">
+              <label
+                htmlFor="my-drawer-4"
+                aria-label="close sidebar"
+                className="drawer-overlay"
+              ></label>
+              <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
+                <li>
+                  <Link to="/">Home</Link>
+                </li>
+                <li>
+                  <Link to="/product">Product</Link>
+                </li>
+                <li>
+                  <Link to="/admin">Admin</Link>
+                </li>
+                {isLoggedIn ? (
+                  <li>
+                    <button onClick={handleLogout}>Logout</button>
+                  </li>
+                ) : (
+                  <>
+                    <li>
+                      <Link to="/login">
+                        <div className="flex gap-2">
+                          <LogIn className="h-5 w-5" />
+                          <span>LogIn</span>
+                        </div>
+                      </Link>
+                    </li>
+                  </>
+                )}
+              </ul>
+            </div>
+          </div>
+        </div>
+        {/* big screen */}
+        <ul className="menu menu-horizontal px-1 hidden lg:flex">
           <li>
             <Link
               to="/"
@@ -48,6 +115,15 @@ function Navbar() {
               className="btn btn-ghost"
             >
               Product
+            </Link>
+          </li>
+
+          <li>
+            <Link
+              to="/admin"
+              className="btn btn-ghost"
+            >
+              Admin
             </Link>
           </li>
           {isLoggedIn ? (
@@ -66,7 +142,7 @@ function Navbar() {
                   <Link to="/login">
                     <div
                       className="tooltip tooltip-bottom flex gap-2"
-                      data-tip="登录"
+                      data-tip="Iniciar sesión"
                     >
                       <LogIn className="h-5 w-5" />
                       <span>LogIn</span>
@@ -74,51 +150,9 @@ function Navbar() {
                   </Link>
                 </button>
               </li>
-              {/* <li>
-                <Link to="/register">
-                  <div
-                    className="tooltip tooltip-bottom"
-                    data-tip="注册"
-                  >
-                    <UserPlus className="h-5 w-5" />
-                  </div>
-                </Link>
-              </li> */}
             </>
           )}
-          <li>
-            <Link
-              to="/admin"
-              className="btn btn-ghost"
-            >
-              产品管理后台
-            </Link>
-          </li>
         </ul>
-        {/* <div className="flex gap-2">
-          <div className="dropdown dropdown-end">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost btn-circle avatar"
-            >
-              <div className="w-10 rounded-full">
-                <img
-                  alt="Tailwind CSS Navbar component"
-                  src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                />
-              </div>
-            </div>
-            <ul
-              tabIndex="-1"
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
-            >
-              <li>
-                <a>Logout</a>
-              </li>
-            </ul>
-          </div>
-        </div> */}
       </div>
     </div>
   );
