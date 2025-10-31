@@ -14,7 +14,7 @@ function Home() {
               calidad para satisfacer sus necesidades tecnológicas.
             </p>
             <Link
-              to="/products"
+              to="/product"
               className="btn btn-primary"
             >
               Ver nuestros productos
