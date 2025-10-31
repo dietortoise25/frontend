@@ -8,17 +8,19 @@ const ImageUpload = ({ onImageUpload }) => {
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     setUploading(true);
     const fileName = `${Date.now()}`;
     const path = await uploadImageToSupabase(file, fileName);
-
     if (path) {
-      const publicUrl = getPublicImageUrl(path);
-      console.log("publicUrl:", publicUrl);
-      setImagePreview(publicUrl);
-      onImageUpload(publicUrl);
+      const fullPath = getPublicImageUrl(path);
+      setImagePreview(fullPath);
+      onImageUpload(fullPath);
+    } else {
+      console.log("Image upload failed, path is null");
     }
     setUploading(false);
   };

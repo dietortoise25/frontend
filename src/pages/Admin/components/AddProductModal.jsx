@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Modal from "@/components/Modal";
-import ImageUpload from "@/components/ImageUpload";
+import uploadImageToSupabase from "@/services/apiStorage";
+import { getPublicImageUrl } from "@/utils/supabaseStorage";
 
 const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
   const [newProduct, setNewProduct] = useState({
@@ -12,6 +13,7 @@ const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
     price_min: 0,
     price_max: 0,
   });
+  const [uploading, setUploading] = useState("");
 
   useEffect(() => {
     if (!isOpen) {
@@ -39,6 +41,28 @@ const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
     e.preventDefault();
     await onAddProduct(newProduct);
     onClose();
+  };
+  const handleFileChange = async (e) => {
+    console.log("handleFileChange triggered");
+    const file = e.target.files[0];
+    if (!file) {
+      console.log("No file selected");
+      return;
+    }
+    setUploading("uploading");
+
+    const fileName = `${Date.now()}`;
+    const path = await uploadImageToSupabase(file, fileName);
+    console.log("uploadImageToSupabase path:", path);
+    if (path) {
+      const fullPath = await getPublicImageUrl(path);
+      console.log("Image upload successful, fullPath:", fullPath);
+      setNewProduct((prevProduct) => ({
+        ...prevProduct,
+        picture: fullPath,
+      }));
+    }
+    setUploading("done");
   };
 
   return (
@@ -124,11 +148,27 @@ const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               图片上传
             </label>
-            <ImageUpload
-              onImageUpload={(publicImageUrl) =>
-                setNewProduct((prev) => ({ ...prev, picture: publicImageUrl }))
-              }
+            <label
+              htmlFor="image-upload-add"
+              className="btn btn-primary"
+            >
+              选择图片
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              id="image-upload-add"
+              disabled={uploading === "uploading"}
+              className="hidden"
             />
+
+            {uploading === "uploading" && (
+              <span className="loading loading-spinner loading-lg ml-2 "></span>
+            )}
+            {uploading === "done" && (
+              <span className="text-success ml-2">上传成功</span>
+            )}
           </div>
           <div>
             <label

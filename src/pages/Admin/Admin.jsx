@@ -36,9 +36,9 @@ function Admin() {
     };
   }, [searchTerm]);
 
-  const refreshProductData = async (search = "") => {
+  const refreshProductData = async (search = "", forceRefresh = false) => {
     const cacheKey = `${currentPage}-${productsPerPage}-${search}`;
-    if (productCache[cacheKey]) {
+    if (!forceRefresh && productCache[cacheKey]) {
       setProducts(productCache[cacheKey].products);
       setTotalProducts(productCache[cacheKey].totalProducts);
       setLoading(false);
@@ -52,6 +52,7 @@ function Admin() {
         productsPerPage,
         search
       );
+
       setProducts(productsResponse.data);
       const countResponse = await getProductCount(search);
       setTotalProducts(countResponse.data);
@@ -64,6 +65,7 @@ function Admin() {
       }));
     } catch (err) {
       setError(err);
+      console.error("Error refreshing product data:", err);
     } finally {
       setLoading(false);
     }
@@ -72,13 +74,11 @@ function Admin() {
   const handleAddProduct = async (newProduct) => {
     try {
       await createProduct(newProduct);
-      setProductCache({}); // 清空缓存
-      await refreshProductData(); // 调用抽离的函数
       setIsAddModalOpen(false);
-      showSuccess("产品添加成功！");
-    } catch (err) {
-      setError(err);
-      showError(`产品添加失败: ${err.message}`);
+      setProductCache({});
+      await refreshProductData(true); // Force refresh after adding a product
+    } catch (error) {
+      console.error("Error adding product:", error);
     }
   };
 
@@ -86,7 +86,7 @@ function Admin() {
     try {
       await updateProduct(updatedProduct);
       setProductCache({}); // 清空缓存
-      await refreshProductData(); // 调用抽离的函数
+      await refreshProductData(true); // Force refresh after updating a product
       setIsEditModalOpen(false);
       setSelectedProduct(null);
       showSuccess("产品更新成功！");
@@ -100,7 +100,7 @@ function Admin() {
     try {
       await deleteProduct(id);
       setProductCache({}); // 清空缓存
-      await refreshProductData(); // 调用抽离的函数
+      await refreshProductData(true); // Force refresh after deleting a product
       showSuccess("产品删除成功！");
     } catch (err) {
       setError(err);
@@ -110,7 +110,7 @@ function Admin() {
 
   useEffect(() => {
     refreshProductData(debouncedSearchTerm); // 调用抽离的函数，并传入防抖后的搜索关键词
-  }, [currentPage, productsPerPage, debouncedSearchTerm]);
+  }, [currentPage, productsPerPage, debouncedSearchTerm, products]);
 
   const handleEditClick = (product) => {
     setSelectedProduct({ ...product });

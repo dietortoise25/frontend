@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Modal from "@/components/Modal";
+import uploadImageToSupabase from "@/services/apiStorage";
+import { getPublicImageUrl } from "@/utils/supabaseStorage";
 
 const EditProductModal = ({
   isOpen,
@@ -8,17 +10,26 @@ const EditProductModal = ({
   selectedProduct,
 }) => {
   const [editedProduct, setEditedProduct] = useState(null);
+  const [uploading, setUploading] = useState("");
 
   useEffect(() => {
     if (isOpen && selectedProduct) {
-      setEditedProduct({
+      const initialProductState = {
         ...selectedProduct,
         picture: selectedProduct.picture || "",
         price_min: selectedProduct.price_min || 0,
         price_max: selectedProduct.price_max || 0,
-      });
+      };
+      setEditedProduct(initialProductState);
+      console.log(
+        "EditProductModal: Initializing editedProduct:",
+        initialProductState
+      );
     } else {
       setEditedProduct(null);
+      console.log(
+        "EditProductModal: Clearing editedProduct (modal closed or no product selected)"
+      );
     }
   }, [isOpen, selectedProduct]);
 
@@ -34,6 +45,33 @@ const EditProductModal = ({
     e.preventDefault();
     await onUpdateProduct(editedProduct);
   };
+
+  const handleFileChange = async (e) => {
+    console.log("handleFileChange triggered");
+    const file = e.target.files[0];
+    if (!file) {
+      console.log("No file selected");
+      return;
+    }
+    setUploading("uploading");
+
+    const fileName = `${Date.now()}`;
+    const path = await uploadImageToSupabase(file, fileName);
+    console.log("uploadImageToSupabase path:", path);
+    if (path) {
+      const fullPath = await getPublicImageUrl(path);
+      console.log("Image upload successful, fullPath:", fullPath);
+      setEditedProduct((prevProduct) => ({
+        ...prevProduct,
+        picture: fullPath,
+      }));
+    }
+    setUploading("done");
+  };
+
+  useEffect(() => {
+    console.log("editedProduct updated:", editedProduct);
+  }, [editedProduct]);
 
   return (
     <Modal
@@ -115,20 +153,30 @@ const EditProductModal = ({
             ></textarea>
           </div>
           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              图片上传
+            </label>
             <label
-              htmlFor="picture"
-              className="block text-sm font-medium text-gray-700"
+              htmlFor="image-upload-edit"
+              className="btn btn-primary"
             >
-              图片 URL
+              选择图片
             </label>
             <input
-              type="text"
-              id="picture"
-              name="picture"
-              value={String(editedProduct.picture)}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              id="image-upload-edit"
+              disabled={uploading === "uploading"}
+              className="hidden"
             />
+
+            {uploading === "uploading" && (
+              <span className="loading loading-spinner loading-lg ml-2 "></span>
+            )}
+            {uploading === "done" && (
+              <span className="text-success ml-2">上传成功</span>
+            )}
           </div>
           <div>
             <label
