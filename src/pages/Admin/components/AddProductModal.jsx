@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Modal from "@/components/Modal";
 import uploadImageToSupabase from "@/services/apiStorage";
 import { getPublicImageUrl } from "@/utils/supabaseStorage";
+import InputField from "@/components/InputField";
 
 const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
   const [newProduct, setNewProduct] = useState({
@@ -14,6 +15,7 @@ const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
     price_max: 0,
   });
   const [uploading, setUploading] = useState("");
+  const [priceInputType, setPriceInputType] = useState("single"); // 'single' or 'range'
 
   useEffect(() => {
     if (!isOpen) {
@@ -26,20 +28,41 @@ const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
         price_min: 0,
         price_max: 0,
       });
+      setPriceInputType("single"); // Reset price input type when modal closes
     }
   }, [isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNewProduct((prevProduct) => ({
-      ...prevProduct,
-      [name]: value,
-    }));
+    setNewProduct((prevProduct) => {
+      const updatedProduct = {
+        ...prevProduct,
+        [name]: value,
+      };
+
+      // Clear irrelevant price fields based on priceInputType
+      if (priceInputType === "single") {
+        updatedProduct.price_min = 0;
+        updatedProduct.price_max = 0;
+      } else if (priceInputType === "range") {
+        updatedProduct.price = 0;
+      }
+      return updatedProduct;
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await onAddProduct(newProduct);
+    let productToSubmit = { ...newProduct };
+
+    if (priceInputType === "single") {
+      productToSubmit.price_min = 0;
+      productToSubmit.price_max = 0;
+    } else if (priceInputType === "range") {
+      productToSubmit.price = 0;
+    }
+
+    await onAddProduct(productToSubmit);
     onClose();
   };
   const handleFileChange = async (e) => {
@@ -76,78 +99,98 @@ const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
           onSubmit={handleSubmit}
           className="space-y-4"
         >
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700"
-            >
-              产品名称
+          <InputField
+            label="产品名称"
+            id="name"
+            name="name"
+            value={newProduct.name}
+            onChange={handleChange}
+            required={true}
+          />
+          <InputField
+            label="标签"
+            id="tag"
+            name="tag"
+            value={newProduct.tag}
+            onChange={handleChange}
+            required={true}
+          />
+
+          {/* Price Input Type Toggle */}
+          <div className="flex items-center">
+            <label className="mr-2">
+              <input
+                type="radio"
+                name="priceInputType"
+                value="single"
+                checked={priceInputType === "single"}
+                onChange={() => setPriceInputType("single")}
+                className="mr-1"
+              />
+              单价格
             </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={newProduct.name}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              required
-            />
+            <label className="mr-2">
+              <input
+                type="radio"
+                name="priceInputType"
+                value="range"
+                checked={priceInputType === "range"}
+                onChange={() => setPriceInputType("range")}
+                className="mr-1"
+              />
+              价格范围
+            </label>
           </div>
-          <div>
-            <label
-              htmlFor="tag"
-              className="block text-sm font-medium text-gray-700"
-            >
-              标签
-            </label>
-            <input
-              type="text"
-              id="tag"
-              name="tag"
-              value={newProduct.tag}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              required
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="price"
-              className="block text-sm font-medium text-gray-700"
-            >
-              价格
-            </label>
-            <input
-              type="number"
+          {priceInputType === "single" && (
+            <InputField
+              label="价格"
               id="price"
               name="price"
+              type="number"
+              placeholder="价格"
               value={newProduct.price}
               onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              required
             />
-          </div>
+          )}
+          {priceInputType === "range" && (
+            <div className="flex space-x-4">
+              <div className="form-control flex-1">
+                <InputField
+                  label="最低价格"
+                  id="price_min"
+                  name="price_min"
+                  type="number"
+                  placeholder="最低价格"
+                  value={newProduct.price_min}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="form-control flex-1">
+                <InputField
+                  label="最高价格"
+                  id="price_max"
+                  name="price_max"
+                  type="number"
+                  placeholder="最高价格"
+                  value={newProduct.price_max}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+          )}
           <div>
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-gray-700"
-            >
-              描述
-            </label>
-            <textarea
+            <InputField
+              label="描述"
               id="description"
               name="description"
               value={newProduct.description}
               onChange={handleChange}
-              rows="3"
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              required
-            ></textarea>
+              required={true}
+              isTextarea={true}
+            />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              图片上传
-            </label>
+            <label className="block text-sm font-medium  mb-2">图片上传</label>
             <label
               htmlFor="image-upload-add"
               className="btn btn-primary"
@@ -170,43 +213,11 @@ const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
               <span className="text-success ml-2">上传成功</span>
             )}
           </div>
-          <div>
-            <label
-              htmlFor="price_min"
-              className="block text-sm font-medium text-gray-700"
-            >
-              最低价格
-            </label>
-            <input
-              type="number"
-              id="price_min"
-              name="price_min"
-              value={newProduct.price_min}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="price_max"
-              className="block text-sm font-medium text-gray-700"
-            >
-              最高价格
-            </label>
-            <input
-              type="number"
-              id="price_max"
-              name="price_max"
-              value={newProduct.price_max}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-          </div>
           <div className="flex justify-end space-x-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium  hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               取消
             </button>

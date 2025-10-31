@@ -3,7 +3,13 @@ import { get, post, patch, del } from "../api";
 const API_URL = "/products";
 
 export const createProduct = async (productData) => {
-  return post(API_URL, productData);
+  const dataToSend = {
+    ...productData,
+    price: Number(productData.price),
+    price_min: Number(productData.price_min),
+    price_max: Number(productData.price_max),
+  };
+  return post(API_URL, dataToSend);
 };
 
 export const getProducts = async (page = 1, limit = 10, search = "") => {
@@ -15,7 +21,13 @@ export const getProductById = async (id) => {
 };
 
 export const updateProduct = async (productData) => {
-  return patch(API_URL, productData);
+  const dataToSend = {
+    ...productData,
+    price: Number(productData.price),
+    price_min: Number(productData.price_min),
+    price_max: Number(productData.price_max),
+  };
+  return patch(API_URL, dataToSend);
 };
 
 export const deleteProduct = async (id) => {

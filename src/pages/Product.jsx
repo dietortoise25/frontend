@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { getProducts, getProductCount } from "@/services/productService";
+import ImageViewer from "../components/ImageViewer/ImageViewer";
+import formatPrice from "../utils/formatPrice";
 
 function Product() {
   const [products, setProducts] = useState([]);
@@ -134,18 +136,18 @@ function Product() {
                 <tr key={product.id}>
                   <td>{product.id}</td>
                   <td>
-                    <img
+                    <ImageViewer
                       src={
                         product.picture ||
                         "https://dummyimage.com/200x200/000/eee"
                       }
-                      alt={product.name || "Marcador de posición"}
+                      alt={product.name || "Placeholder"}
                       className="w-16 h-16 object-cover"
                     />
                   </td>
                   <td>{product.name}</td>
                   <td>{product.tag}</td>
-                  <td>{product.price}</td>
+                  <td>{formatPrice(product.price, product.price_min, product.price_max)}</td>
                   <td>{product.description}</td>
                 </tr>
               ))}

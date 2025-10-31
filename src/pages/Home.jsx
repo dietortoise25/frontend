@@ -24,43 +24,84 @@ function Home() {
       </div>
 
       {/* Product Categories Section */}
-      {/* <div className="container mx-auto px-4 py-16">
-        <h2 className="text-4xl font-bold text-center mb-12">Nuestros Tipos de Productos</h2>
+      <div className="container mx-auto px-4 py-16">
+        <h2 className="text-4xl font-bold text-center mb-12">
+          Nuestros Tipos de Productos
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="card bg-base-100 shadow-xl image-full">
-            <figure><img src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b49d.jpg" alt="Electronics" /></figure>
+            <figure>
+              <img
+                src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b49d.jpg"
+                alt="Electronics"
+              />
+            </figure>
             <div className="card-body">
               <h2 className="card-title">Productos Electrónicos</h2>
-              <p>Desde teléfonos inteligentes hasta computadoras portátiles, ofrecemos los últimos dispositivos electrónicos.</p>
+              <p>
+                Desde teléfonos inteligentes hasta computadoras portátiles,
+                ofrecemos los últimos dispositivos electrónicos.
+              </p>
               <div className="card-actions justify-end">
-                <Link to="/products?category=electronics" className="btn btn-primary">Ver detalles</Link>
+                <Link
+                  to="/product"
+                  className="btn btn-primary"
+                >
+                  Ver detalles
+                </Link>
               </div>
             </div>
           </div>
 
           <div className="card bg-base-100 shadow-xl image-full">
-            <figure><img src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b49d.jpg" alt="Accessories" /></figure>
+            <figure>
+              <img
+                src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b49d.jpg"
+                alt="Accessories"
+              />
+            </figure>
             <div className="card-body">
               <h2 className="card-title">Accesorios</h2>
-              <p>Auriculares, cargadores, fundas protectoras y más para mejorar su experiencia de usuario.</p>
+              <p>
+                Auriculares, cargadores, fundas protectoras y más para mejorar
+                su experiencia de usuario.
+              </p>
               <div className="card-actions justify-end">
-                <Link to="/products?category=accessories" className="btn btn-primary">Ver detalles</Link>
+                <Link
+                  to="/products"
+                  className="btn btn-primary"
+                >
+                  Ver detalles
+                </Link>
               </div>
             </div>
           </div>
 
           <div className="card bg-base-100 shadow-xl image-full">
-            <figure><img src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b49d.jpg" alt="Peripherals" /></figure>
+            <figure>
+              <img
+                src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b49d.jpg"
+                alt="Peripherals"
+              />
+            </figure>
             <div className="card-body">
               <h2 className="card-title">Periféricos</h2>
-              <p>Teclados, ratones, monitores y más para crear su estación de trabajo ideal.</p>
+              <p>
+                Teclados, ratones, monitores y más para crear su estación de
+                trabajo ideal.
+              </p>
               <div className="card-actions justify-end">
-                <Link to="/products?category=peripherals" className="btn btn-primary">Ver detalles</Link>
+                <Link
+                  to="/products"
+                  className="btn btn-primary"
+                >
+                  Ver detalles
+                </Link>
               </div>
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 }

@@ -9,6 +9,9 @@ import {
 import useToast from "@/hooks/useToast";
 import AddProductModal from "./components/AddProductModal";
 import EditProductModal from "./components/EditProductModal";
+import { Plus, Edit, Trash2 } from "lucide-react";
+import ImageViewer from "../../components/ImageViewer/ImageViewer";
+import formatPrice from "../../utils/formatPrice";
 
 function Admin() {
   const { showSuccess, showError } = useToast();
@@ -137,13 +140,7 @@ function Admin() {
       )}
 
       {!loading && !error && (
-        <div className="mb-4 flex justify-between">
-          <button
-            className="btn btn-primary"
-            onClick={() => setIsAddModalOpen(true)}
-          >
-            添加产品
-          </button>
+        <div className="mb-4 flex justify-end gap-2">
           <label className="input input-bordered flex items-center gap-2">
             <svg
               className="h-[1em] opacity-50"
@@ -173,6 +170,13 @@ function Admin() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </label>
+          <button
+            className="btn hover:bg-primary hover:text-white"
+            onClick={() => setIsAddModalOpen(true)}
+          >
+            <Plus />
+            添加
+          </button>
         </div>
       )}
 
@@ -195,7 +199,15 @@ function Admin() {
                 <tr key={product.id}>
                   <td>{product.id}</td>
                   <td>
-                    <img
+                    {/* <img
+                      src={
+                        product.picture ||
+                        "https://dummyimage.com/200x200/000/eee"
+                      }
+                      alt={product.name || "Placeholder"}
+                      className="w-16 h-16 object-cover"
+                    /> */}
+                    <ImageViewer
                       src={
                         product.picture ||
                         "https://dummyimage.com/200x200/000/eee"
@@ -206,20 +218,20 @@ function Admin() {
                   </td>
                   <td>{product.name}</td>
                   <td>{product.tag}</td>
-                  <td>{product.price}</td>
+                  <td>{formatPrice(product.price, product.price_min, product.price_max)}</td>
                   <td>{product.description}</td>
                   <td>
                     <button
                       className="btn btn-sm btn-info mr-2"
                       onClick={() => handleEditClick(product)}
                     >
-                      编辑
+                      <Edit className="h-4 w-4" />
                     </button>
                     <button
                       className="btn btn-sm btn-error"
                       onClick={() => handleDeleteProduct(product.id)}
                     >
-                      删除
+                      <Trash2 className="h-4 w-4" />
                     </button>
                   </td>
                 </tr>
