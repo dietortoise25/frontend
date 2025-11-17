@@ -1,6 +1,12 @@
 import { useState } from "react";
 
-const ImageViewer = ({ src, alt, className }) => {
+interface ImageViewerProps {
+  src: string;
+  alt: string;
+  className?: string;
+}
+
+const ImageViewer = ({ src, alt, className = "" }: ImageViewerProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => {

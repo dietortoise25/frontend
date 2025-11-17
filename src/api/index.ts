@@ -1,6 +1,7 @@
 import request from "./request";
+import type { ApiResponse } from "@/types/api";
 
-export function get(url, params) {
+export function get(url: string, params?: Record<string, any>): Promise<ApiResponse> {
   return request({
     url: url,
     method: "get",
@@ -8,7 +9,7 @@ export function get(url, params) {
   });
 }
 
-export function post(url, data) {
+export function post(url: string, data?: any): Promise<ApiResponse> {
   return request({
     url: url,
     method: "post",
@@ -16,14 +17,15 @@ export function post(url, data) {
   });
 }
 
-export function put(url, data) {
+export function put(url: string, data?: any): Promise<ApiResponse> {
   return request({
     url: url,
     method: "put",
     data: data,
   });
 }
-export function patch(url, data) {
+
+export function patch(url: string, data?: any): Promise<ApiResponse> {
   return request({
     url: url,
     method: "patch",
@@ -31,7 +33,7 @@ export function patch(url, data) {
   });
 }
 
-export function del(url, params) {
+export function del(url: string, params?: Record<string, any>): Promise<ApiResponse> {
   return request({
     url: url,
     method: "delete",

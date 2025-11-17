@@ -101,3 +101,26 @@ export interface UploadedImage {
   size: number;
   type: string;
 }
+
+// Supabase Storage 相关类型
+export interface SupabaseStorageResponse {
+  data: {
+    path: string;
+    fullPath: string;
+    id: string;
+  } | null;
+  error: {
+    message: string;
+  } | null;
+}
+
+export interface SupabaseUploadResponse {
+  data: {
+    path: string;
+    fullPath: string;
+    id: string;
+  } | null;
+  error: {
+    message: string;
+  } | null;
+}

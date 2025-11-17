@@ -1,13 +1,17 @@
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import uploadImageToSupabase from "@/services/apiStorage";
 import { getPublicImageUrl } from "@/utils/supabaseStorage";
 
-const ImageUpload = ({ onImageUpload }) => {
-  const [imagePreview, setImagePreview] = useState(null);
+interface ImageUploadProps {
+  onImageUpload: (imageUrl: string) => void;
+}
+
+const ImageUpload = ({ onImageUpload }: ImageUploadProps) => {
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (!file) {
       return;
     }

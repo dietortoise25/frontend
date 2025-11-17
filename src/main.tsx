@@ -9,9 +9,12 @@ import ToastContainer from "./components/Toast/ToastContainer";
 // Call checkAuth on application startup
 authStore.getState().checkAuth();
 
-createRoot(document.getElementById("root")).render(
+const rootElement = document.getElementById("root");
+if (rootElement) {
+  createRoot(rootElement).render(
   <StrictMode>
     <RouterProvider router={router} />
     <ToastContainer />
   </StrictMode>
 );
+}

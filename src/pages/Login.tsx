@@ -35,7 +35,7 @@ function Login() {
         }
       }
     } catch (error) {
-      showError("Login failed: " + error.message); // Show error toast
+      showError("Login failed: " + (error as Error).message); // Show error toast
     } finally {
       setIsLoading(false); // Set isLoading to false when login request ends
     }

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { LogIn, UserPlus } from "lucide-react";
+import { LogIn } from "lucide-react";
 import { useEffect } from "react";
 import useAuthStore from "../store/authStore";
 import { logoutUser } from "../services/authService";

@@ -31,7 +31,7 @@ function Register() {
         setMessage(registerResult.message);
       }
     } catch (error) {
-      setMessage("注册失败！" + error.message);
+      setMessage("注册失败！" + (error as Error).message);
     } finally {
       setIsLoading(false);
     }

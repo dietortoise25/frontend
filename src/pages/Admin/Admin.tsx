@@ -79,7 +79,7 @@ function Admin() {
       await createProduct(newProduct);
       setIsAddModalOpen(false);
       setProductCache({});
-      await refreshProductData(true); // Force refresh after adding a product
+      await refreshProductData("", true); // Force refresh after adding a product
     } catch (error) {
       console.error("Error adding product:", error);
     }
@@ -89,13 +89,13 @@ function Admin() {
     try {
       await updateProduct(updatedProduct);
       setProductCache({}); // 清空缓存
-      await refreshProductData(true); // Force refresh after updating a product
+      await refreshProductData("", true); // Force refresh after updating a product
       setIsEditModalOpen(false);
       setSelectedProduct(null);
       showSuccess("产品更新成功！");
     } catch (err) {
       setError(err);
-      showError(`产品更新失败: ${err.message}`);
+      showError(`产品更新失败: ${(err as Error).message || "未知错误"}`);
     }
   };
 
@@ -103,11 +103,11 @@ function Admin() {
     try {
       await deleteProduct(id);
       setProductCache({}); // 清空缓存
-      await refreshProductData(true); // Force refresh after deleting a product
+      await refreshProductData("", true); // Force refresh after deleting a product
       showSuccess("产品删除成功！");
     } catch (err) {
       setError(err);
-      showError(`产品删除失败: ${err.message}`);
+      showError(`产品删除失败: ${(err as Error).message || "未知错误"}`);
     }
   };
 

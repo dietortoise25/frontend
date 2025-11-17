@@ -1,3 +1,17 @@
+import { ChangeEvent } from "react";
+
+interface InputFieldProps {
+  label: string;
+  id: string;
+  name: string;
+  value: string | number;
+  onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  type?: string;
+  placeholder?: string;
+  required?: boolean;
+  isTextarea?: boolean;
+}
+
 const InputField = ({
   label,
   id,
@@ -8,7 +22,7 @@ const InputField = ({
   placeholder,
   required = false,
   isTextarea = false,
-}) => {
+}: InputFieldProps) => {
   return (
     <div>
       <label
@@ -31,13 +45,12 @@ const InputField = ({
       )}
       {isTextarea && (
         <textarea
-          type={type}
           id={id}
           name={name}
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          rows="3"
+          rows={3}
           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           required={required}
         ></textarea>
