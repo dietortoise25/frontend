@@ -1,13 +1,13 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./style.css";
-import router from "./router/index.jsx";
+import router from "./router/index";
 import { RouterProvider } from "react-router-dom";
-import useAuthStore from "./store/authStore.js";
-import ToastContainer from "./components/Toast/ToastContainer.jsx";
+import authStore from "./store/authStore";
+import ToastContainer from "./components/Toast/ToastContainer";
 
 // Call checkAuth on application startup
-useAuthStore.getState().checkAuth();
+authStore.getState().checkAuth();
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

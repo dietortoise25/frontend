@@ -1,11 +1,19 @@
 import { create } from "zustand";
+import type { Toast } from "../types/api";
 
-const useToastStore = create((set) => ({
+interface ToastStore {
+  toasts: Toast[];
+  addToast: (message: string, type?: Toast['type'], duration?: number) => void;
+  removeToast: (id: string) => void;
+}
+
+const useToastStore = create<ToastStore>((set) => ({
   toasts: [],
   addToast: (message, type = "info", duration = 3000) => {
-    const id = Date.now();
+    const id = Date.now().toString();
+    const newToast: Toast = { id, message, type: type as Toast['type'], duration };
     set((state) => ({
-      toasts: [...state.toasts, { id, message, type, duration }],
+      toasts: [...state.toasts, newToast],
     }));
     setTimeout(() => {
       set((state) => ({

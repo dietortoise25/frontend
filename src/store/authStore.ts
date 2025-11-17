@@ -1,6 +1,16 @@
 import { create } from 'zustand';
+import type { User } from '../types/api';
 
-const authStore = create((set) => ({
+interface AuthStore {
+  isLoggedIn: boolean;
+  user: User | null;
+  token: string | null;
+  login: (user: User, token: string) => void;
+  logout: () => void;
+  checkAuth: () => void;
+}
+
+const authStore = create<AuthStore>((set) => ({
   isLoggedIn: false,
   user: null,
   token: null,

@@ -1,6 +1,6 @@
 import axios from "axios";
 import authStore from "../store/authStore";
-import environment from "../utils/useApiUrl.js";
+import environment from "../utils/useApiUrl";
 
 const service = axios.create({
   baseURL: environment.API_URL, // api 的 base_url
